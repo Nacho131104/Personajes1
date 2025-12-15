@@ -25,5 +25,5 @@ export type Show ={
     _id: ObjectId,
     title: string,
     episodes: number,
-    characters: string[]
+    characters: ObjectId[]
 }

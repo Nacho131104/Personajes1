@@ -32,9 +32,9 @@ export const typeDefs = gql `
 
         register(email: String!, password: String!) : String!
         login(email: String!, password: String!) : String!
-        insertShow(title: String!, episodes: Int!, characters: [String!]): Show!
+        insertShow(title: String!, episodes: Int!, characters: [String]!): Show!
         insertCharacter(name: String!, gender: String!, age: Int!, show_name: String!): Character!
-
+        insertCharacterInaShow(idCharacter: String!, idShow: String!): Show!
     }
 
 

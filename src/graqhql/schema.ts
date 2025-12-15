@@ -26,6 +26,7 @@ export const typeDefs = gql `
     type Query {
         me:User
         getCharacter(id: String!): Character
+        getCharacters(page: Int, size: Int): [Character]!
     }
 
     type Mutation {

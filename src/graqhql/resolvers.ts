@@ -7,7 +7,7 @@ import { getDb } from "../mongo/conexion"
 import { comprobarPersonajes } from "../collections/shows"
 import { ObjectId } from "mongodb"
 import { GraphQLError } from "graphql"
-
+import { getCharacter } from "../collections/characters"
 const CollectionUsers = "Usuarios"
 const collectionShows= "Shows"
 const CollectionCharacters= "Characters"
@@ -20,6 +20,14 @@ export const resolvers:IResolvers = {
             if(!user)throw new Error("Debes logearte primero")
             return user
         },
+        getCharacter: async(_,{id}) =>{
+            const personaje= await getCharacter(id)
+            return personaje
+        },
+        getCharacters:async(_,{p, s})=>{
+            const page = p || 1
+            const size = s || 3
+        }
 
 
     },

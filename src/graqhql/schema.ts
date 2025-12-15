@@ -35,6 +35,7 @@ export const typeDefs = gql `
         insertShow(title: String!, episodes: Int!, characters: [String]!): Show!
         insertCharacter(name: String!, gender: String!, age: Int!, show_name: String!): Character!
         insertCharacterInaShow(idCharacter: String!, idShow: String!): Show!
+        insertShowInUser(idShow: String!): User!
     }
 
 

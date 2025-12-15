@@ -1,6 +1,6 @@
 
 import { IResolvers } from "@graphql-tools/utils"
-import {Character, Show} from "../utils/types"
+import {Character, Show, User} from "../utils/types"
 import {signToken} from "../utils/auth"
 import { insertarUsuario,comprobarContraseña } from "../utils/users"
 import { getDb } from "../mongo/conexion"
@@ -108,6 +108,30 @@ export const resolvers:IResolvers = {
             }
             return updateShow;
 
+        },
+        
+        insertShowInUser: async (_,{idShow},{user})=>{
+            const db = getDb()
+            //en caso de que se haya logeado el usuario, se obtiene su id del context para modificarlo
+            if(!user) throw new GraphQLError("Debe de logearse primero")
+            const userId = user._id
+            console.log(userId)
+
+            //se confirma que el id del show existe en la db
+            const show = await db.collection<Show>(collectionShows).findOne({_id: new ObjectId(idShow)})
+            if(!show) return null
+
+            await db.collection<User>(CollectionUsers).updateOne(
+                {_id: userId},
+                {$addToSet:{shows: idShow}}
+            )
+            const modificado = await db.collection<User>(CollectionUsers).findOne({_id: userId})
+            if(!modificado) return null
+            return {
+                _id: modificado._id,
+                email: modificado.email,
+                shows: modificado.shows
+            }
         }
     },
     Show: {
@@ -121,6 +145,20 @@ export const resolvers:IResolvers = {
 
             //se retorna el array de objetos Character en caso de que su id este dentro del array de ids obtenido antes
             return await db.collection(CollectionCharacters).find({_id: {$in: charactersIds}}).toArray()
+        }
+    },
+    User : {
+        shows:async(parent: User) =>{
+            const db = getDb()
+
+                        //en caso de que el array de personajes del show sea de strings, se cambiaran a objectsId
+            const ShowsIds = parent.shows.map((c) => typeof c === "string" ? new ObjectId(c): c )
+            if(!ShowsIds) return null
+            console.log(ShowsIds)
+
+            //se retorna el array de objetos Character en caso de que su id este dentro del array de ids obtenido antes
+            return await db.collection(collectionShows).find({_id: {$in: ShowsIds}}).toArray()
+
         }
     }
 
